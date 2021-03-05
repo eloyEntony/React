@@ -3,26 +3,37 @@ import { withRouter } from "react-router-dom";
 import { Container } from 'react-bootstrap';
 import { Form, Button, Col , Row} from "react-bootstrap";
 
+import {connect} from "react-redux"
+import {update} from "../../services/api-service"
+import {updateContact, setContact} from "../../actions/contactListActions"
+
 class EditItem extends React.Component {
 
-    state={
-        id: this.props.currentContact.Id,
-        name: this.props.currentContact.Name,
-        surname: this.props.currentContact.Surname,
-        avatar: this.props.currentContact.Avatar,
-        position: this.props.currentContact.Position,
-        nickName: this.props.currentContact.NickName,
-        email: this.props.currentContact.Email,
-        phone: this.props.currentContact.Phone,
-        favorite: this.props.currentContact.Favorite,
-        isRedirect: false,
+     state={
+         id: this.props.Id,
+         name: this.props.Name,
+         surname: this.props.Surname,
+         avatar: this.props.Avatar,
+         position: this.props.Position,
+         nickName: this.props.NickName,
+         email: this.props.Email,
+         phone: this.props.Phone,
+         favorite: this.props.Favorite,
+         isRedirect: false,
+     }
+
+    componentDidMount(){
+        const {List, currentContact} = this.props
+        console.log("EDIT", this.props)
+        //console.log("EDIT state", this.props.currentContact)
+
     }
 
     getProperty=(e)=>{
         let _name = e.target.name
-        console.log(_name);
+        //console.log(_name);
         let _value = e.target.value
-        console.log(_value);
+        //console.log(_value);
 
         this.setState({
             [_name] :_value
@@ -31,8 +42,8 @@ class EditItem extends React.Component {
 
     onSendForm=(e)=>{
         e.preventDefault();
-        const{ id, name, surname, avatar, position, nickName, phone, email, favorite } = this.state;
-
+        const { id, name, surname, avatar, position, nickName, phone, email, favorite } = this.state;
+       
         this.props.onEdit(id, name, surname, avatar, position, nickName, phone, email, favorite)
        
 
@@ -86,6 +97,11 @@ class EditItem extends React.Component {
                                                     <Form.Control value={this.state.nickName} name="nickName" onChange={this.getProperty}/>
                                                 </Form.Group>
 
+                                                <Form.Group controlId="formGridAddress2">
+                                                    <Form.Label>Avatar</Form.Label>
+                                                    <Form.Control value={this.state.avatar} name="avatar" onChange={this.getProperty}/>
+                                                </Form.Group>
+
                                                 <Form.Row>
                                                     <Form.Group as={Col} controlId="formGridCity">
                                                     <Form.Label>Phone</Form.Label>
@@ -112,4 +128,14 @@ class EditItem extends React.Component {
         </Fragment>
     )}
 }
-export default withRouter (EditItem)
+
+const mapStateToProps =({ContactListReducer})=>{
+    const{List} = ContactListReducer
+    return {List}
+}
+const mapDispatchToProps={
+    updateContact, setContact
+}
+
+export default connect (mapStateToProps, mapDispatchToProps)(EditItem)
+//export default withRouter (EditItem)

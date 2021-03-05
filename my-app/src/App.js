@@ -11,6 +11,8 @@ import NotFound from "./components/notFound"
 import store from "./store"
 import {Provider} from "react-redux"
 
+import history from "./history"
+
 import {
   BrowserRouter as Router,
   Switch,
@@ -26,7 +28,7 @@ class App extends Component{
     return(
       <Fragment>
         <Provider store = {store}>
-          <Router>
+          <Router history={history}>
             <Header />
             <Switch>
               <Route path="/add" exact component = {()=><AddNew/>} />

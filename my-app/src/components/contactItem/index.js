@@ -1,4 +1,4 @@
-import React from "react";
+import React, {Fragment} from "react";
 import { library } from '@fortawesome/fontawesome-svg-core'
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import { fab, faSkype } from '@fortawesome/free-brands-svg-icons'
@@ -14,58 +14,39 @@ library.add(far ,fab, fas, faCheckSquare, faStar, faSkype, faPhone, faEnvelope, 
 
 class contactItem extends React.Component{
 
-    // shouldComponentUpdate(nextProps, nextState){
-    //     console.log("shouldComponentUpdate")
-    //     console.log("prev ", nextProps)
-    //     console.log("next ", nextState)  
-    //     // if(nextProps.Avatar === nextState.Avatar)  
-    //     //     return true;
-    //     // else
-    //     //     return false;
-    //     return true;
-    // }
-
-    // componentDidUpdte(){
-    //     console.log("componentDidUpdte")
-    // }
-
-    // componentWillUnmount(){
-    //     console.log("componentWillUnmount")
-    // }
-
-
     render(){
-        const {Name, Surname, Avatar, Position, NickName, Phone, Email, Favorite, onFavorite, onRemove, onUpdate} = this.props
+        const {Name, Surname, Avatar, Position, NickName, Phone, Email, Favorite, onFavorite,onRemove, onUpdate} = this.props
+        const URL= `https://randomuser.me/api/portraits/men/${Avatar}.jpg`
         
         return(
-            <div className="list-group-item">
-                <div className="media">
-                    <div className="pull-left">
-                        <img className="img-circle img" src={Avatar} alt="..."/>
-                    </div>
-                    <div className="media-body">
-                    <h4 className="media-heading">{Name} {Surname}<small>{Position}</small></h4>
-                    <div className="media-content">
-                        <FontAwesomeIcon icon={["fas", "map-marker-alt"]}/> San Francisco, California, United States
-                        <ul className="list-unstyled">
-                            <li><a href='tel:{Phone}'><FontAwesomeIcon icon={["fab", "skype"]} /> {NickName}</a></li>
-                            <li><a href='tel:{Phone}'><FontAwesomeIcon icon={["fas", "phone"]} /> {Phone}</a></li>
-                            <li><a href='mailto:{Email}'><FontAwesomeIcon icon={["fas", "envelope"]}/> {Email}</a></li>
-                            {Favorite?<li>
-                                <FontAwesomeIcon icon={["fas", "star"]} size="lg" className="favorite" onClick={onFavorite}/>
-                                </li>:<li><FontAwesomeIcon icon={["far", "star"]} size="lg" className="favorite" onClick={onFavorite}/>
-                                </li>                               
-                            }
-                            <li><a ><FontAwesomeIcon icon={["far", "trash-alt"]} onClick={onRemove}/></a></li>                           
-                            <Link to="/edit" className="table-link" onClick={onUpdate}><FontAwesomeIcon icon={["fas", "user-edit"]}/></Link>
-                        </ul>
+            <Fragment>
+                <div className="list-group-item">
+                    <div className="media">
+                        <div className="pull-left">
+                            <img className="img-circle img" src={URL} alt="..."/>
+                        </div>
+                        <div className="media-body">
+                        <h4 className="media-heading">{Name} {Surname}<small>{Position}</small></h4>
+                        <div className="media-content">
+                            <FontAwesomeIcon icon={["fas", "map-marker-alt"]}/> 
+                            <ul className="list-unstyled">
+                                <li><a href='tel:{Phone}'><FontAwesomeIcon icon={["fab", "skype"]} /> {NickName}</a></li>
+                                <li><a href='tel:{Phone}'><FontAwesomeIcon icon={["fas", "phone"]} /> {Phone}</a></li>
+                                <li><a href='mailto:{Email}'><FontAwesomeIcon icon={["fas", "envelope"]}/> {Email}</a></li>
+                                {Favorite?<li>
+                                    <FontAwesomeIcon icon={["fas", "star"]} size="lg" className="favorite" onClick={onFavorite}/>
+                                    </li>:<li><FontAwesomeIcon icon={["far", "star"]} size="lg" className="favorite" onClick={onFavorite}/>
+                                    </li>                               
+                                }
+                                <li><a ><FontAwesomeIcon icon={["far", "trash-alt"]} onClick={onRemove}/></a></li>                           
+                                <Link to="/edit" className="table-link" onClick={onUpdate}><FontAwesomeIcon icon={["fas", "user-edit"]}/></Link>
+                            </ul>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
+            </Fragment>
         )
-    }
-   
+    }   
 }
-
 export default contactItem

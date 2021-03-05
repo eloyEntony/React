@@ -18,3 +18,18 @@ export const addContact =(newContact)=>{
         payload: newContact
     }
 }
+
+export const updateContact =(newContact)=>{
+    return{
+        type:"UPDATE_CONTACT",
+        payload: newContact
+    }
+}
+
+export const setContact =(contact)=>{
+    console.log("555555", contact)
+    return{
+        type:"SET_CURRENT",
+        payload: contact
+    }
+}

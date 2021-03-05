@@ -1,26 +1,21 @@
 import React,  {Fragment} from "react";
 import ContactItem from "../contactItem"
 import 'bootstrap/dist/css/bootstrap.css';
-import {getContactList, removeContactID, addContact} from "../../actions/contactListActions"
-
+import {getContactList, removeContactID, setContact} from "../../actions/contactListActions"
 import {connect} from "react-redux"
+import {getAllContacts, removeContact} from "../../services/api-service"
 
-import {getAllContacts, addNewContact} from "../../services/api-service"
-import {removeContact} from "../../services/api-service"
 
 class ContactList extends React.Component{
-    // URL ="https://contactlistreact-682dd-default-rtdb.firebaseio.com/List.json"
 
-    componentDidMount(){
-      //console.log("component-did-mount")
+     componentDidMount(){      
       const {getContactList, loading} = this.props;
-      getAllContacts().then(data=>{console.log(data); getContactList(data)} ).catch(err=>console.log(err));
-    }
-
-    state ={
-      Contacts:[],
-      currentContact: "",
-    }
+      getAllContacts()
+      .then(data=>{
+        getContactList(data.List)
+      })
+      .catch(err=>console.log(err));
+    }  
   
     onFavorite=(Id)=>{
       console.log("onFavorite ID > ",Id)
@@ -37,25 +32,28 @@ class ContactList extends React.Component{
     onRemove=(Id)=>{
 
       const{removeContactID, loading} = this.props;
-      //removeContactID({Id});
-      removeContact(Id).then(data=>{console.log(data); removeContactID({Id})}).catch(err=>console.log(err));
+      const newList = this.props.List.filter((item) => item.Id !== Id);
+       removeContact(newList)
+       .then(data=>{        
+          removeContactID(data.List)
+        })
+       .catch(err=>console.log(err));     
+    }  
 
-      // const index = this.state.Contacts.findIndex((elem) => elem.Id === Id);
-      // const tmpList = this.state.Contacts.splice(index, 1);  
-      // this.onSaveData(tmpList);  
-      // this.setState(() => {
-      //   return {
-      //      state: tmpList
-      //    }
-      //  })    
-    }
-    
-  
     onUpdate=(Id)=>{
-      const index = this.state.Contacts.findIndex((elem) => elem.Id === Id);
-      const Contact = this.state.Contacts[index];
-      this.setState({currentContact:Contact}) 
-      console.log(">>" , this.state.currentContact)   
+      const index = this.props.List.findIndex((elem) => elem.Id === Id);
+      const Contact = this.props.List[index];
+
+
+      getAllContacts()
+      .then(data=>{
+        data.currentContact = Contact;
+        setContact(data.currentContact)
+      }).catch(err=>console.log(err));
+
+
+      //this.props.currentContact:Contact;
+      //console.log(">>" , this.props.currentContact)   
     }
   
     onEdit = (Id, Name, Surname, Avatar, Position, NickName, Phone, Email, Favorite)=>{
@@ -88,17 +86,7 @@ class ContactList extends React.Component{
       
     }
   
-    onAddNew=(newContact)=>{    
-
-      const{addContact, loading} = this.props;
-      addNewContact(newContact).then(data=>{console.log(data); addContact({newContact})}).catch(err=>console.log(err));
-
-      // var newArray = this.state.Contacts.slice();    
-      // newArray.push(newContact);   
-      // this.onSaveData(newArray)
-      // this.setState({Contacts:newArray})
-    }
-  
+     
     onSaveData=(newContact)=>{
       fetch(this.URL, {
         method:"PUT",
@@ -109,7 +97,6 @@ class ContactList extends React.Component{
 
     render(){
         const {List} = this.props;
-        console.log("List-> ", List)
         return(
             <Fragment>   
                 <div className="page-people-directory">       
@@ -121,8 +108,8 @@ class ContactList extends React.Component{
                                                     Phone={item.Phone} Email={item.Email} 
                                                     //Favorite={item.Favorite} 
                                                     // onFavorite={()=> onFavorite(item.Id)}
-                                                    onRemove={this.onRemove(item.Id)}
-                                                    // onUpdate={()=> onUpdate(item.Id)}
+                                                    onRemove={()=>this.onRemove(item.Id)}
+                                                     onUpdate={()=> this.onUpdate(item.Id)}
                                         />
                             })):<h2>Contacts not found</h2>
                         } 
@@ -135,12 +122,12 @@ class ContactList extends React.Component{
 }
 
 const mapStateToProps =({ContactListReducer})=>{
-    console.log("mapStateToProps", ContactListReducer)
+    //console.log("mapStateToProps", ContactListReducer)
     const {List, loading}=ContactListReducer;
     return {List, loading}
 }
 
 const mapDispatchToProps={
-    getContactList,
+    getContactList, removeContactID, setContact
 }
 export default connect(mapStateToProps, mapDispatchToProps)(ContactList);

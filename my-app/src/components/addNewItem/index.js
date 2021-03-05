@@ -4,10 +4,16 @@ import { withRouter } from "react-router-dom";
 import { Container } from 'react-bootstrap';
 import { Form, Button,  Col , Row} from "react-bootstrap";
 
-
+import {connect} from "react-redux"
+import {addNewContact} from "../../services/api-service"
+import {addContact} from "../../actions/contactListActions"
+import history from "../../history"
+import { Redirect } from "react-router-dom";
 
 class addNewItem extends React.Component{
 
+
+    //componentDidMount(){const {List, addContact, loading} = this.props; console.log("==================", List)}
     state ={        
         "Name": "",
         "Surname": "",
@@ -19,12 +25,11 @@ class addNewItem extends React.Component{
         "Favorite": false,    
         "isRedirect": false
     }
-//edit https://github.com/macnaer/FrontEnd94-Contact-List/commit/3aa0100846cd95d2fdf363c5291376703a552671
     getProperty=(e)=>{
         let _name = e.target.name
-        console.log(_name);
+        //console.log(_name);
         let _value = e.target.value
-        console.log(_value);
+        //console.log(_value);
 
         this.setState({
             [_name] :_value
@@ -32,28 +37,38 @@ class addNewItem extends React.Component{
     }
     onSendForm=(e)=>{
         e.preventDefault();
-        console.log(this.state)
+        //console.log(this.state)
 
         const newContact = {
             
             "Id": uuidv4(),
             "Name": this.state.Name,
             "Surname": this.state.Surname,
-            "Avatar": "https://bootdey.com/img/Content/avatar/avatar1.png",
+            "Avatar": this.state.Avatar,
             "Position": this.state.Position,
             "NickName": this.state.NickName,
             "Phone": this.state.Phone,
             "Email": this.state.Email,
             "Favorite": false, 
         }
-        console.log(newContact)
-        const{onAddNew}=this.props;
-        onAddNew(newContact);
-        this.props.history.push("/");
+
+        const {List, addContact, loading} = this.props;
         
+        List.push(newContact)
+        addNewContact(List).then(data=>{
+            addContact(data.List)
+        }).catch(err=>console.log(err));
+
+        //history.push('/')
+          this.setState({
+              "isRedirect": true
+          })
     }
     
     render(){ 
+         if (this.state.isRedirect) {
+             return <Redirect to="/" />;
+           }
         return(
             <Fragment>
              <Container>
@@ -82,14 +97,19 @@ class addNewItem extends React.Component{
                                                     </Form.Group>
                                                 </Form.Row>
 
-                                                <Form.Group controlId="formGridAddress1">
+                                                <Form.Group>
                                                     <Form.Label>Position</Form.Label>
                                                     <Form.Control placeholder="Position" name="Position"  onChange={this.getProperty}/>
                                                 </Form.Group>
 
-                                                <Form.Group controlId="formGridAddress2">
+                                                <Form.Group>
                                                     <Form.Label>NickName</Form.Label>
                                                     <Form.Control placeholder="NickName" name="NickName" onChange={this.getProperty}/>
+                                                </Form.Group>
+
+                                                <Form.Group>
+                                                    <Form.Label>Avater</Form.Label>
+                                                    <Form.Control placeholder="Avatar number" name="Avatar" onChange={this.getProperty}/>
                                                 </Form.Group>
 
                                                 <Form.Row>
@@ -120,4 +140,11 @@ class addNewItem extends React.Component{
     )}
 }
 
-export default withRouter (addNewItem)
+const mapStateToProps =({ContactListReducer})=>{
+    const{List} = ContactListReducer
+    return {List}
+}
+const mapDispatchToProps={
+    addContact
+}
+export default connect (mapStateToProps, mapDispatchToProps)(addNewItem)
