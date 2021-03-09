@@ -5,6 +5,8 @@ import './App.css';
 //////////
 import ToDoList from "./components/todoList/todoList"
 
+import {AppContext} from "./reducer"
+
 const  App =()=> {
 
   // state={
@@ -24,6 +26,9 @@ const  App =()=> {
   const [todos, setTodos]= useState([]);
   const [todoTitle, setTitle]= useState("");
 
+  //const AppContext = React.createContext(todos)
+
+
   useEffect(()=>{
     const arr = localStorage.getItem("todos")||[]
     setTodos(JSON.parse(arr));
@@ -35,7 +40,7 @@ const  App =()=> {
 
   const AddTodo =e=>{
     if(e.key === "Enter"){
-      setTodos([
+      setTodos([ 
         ...todos,
         {
           id:uuid(),
@@ -49,14 +54,17 @@ const  App =()=> {
 
   
     return (
-      <div className="container">
-        <h1>TODO LIST</h1>
-        <label>Add new todo </label>
-        <input type="text" value= {todoTitle} 
-          onChange={event =>setTitle(event.target.value)}
-          onKeyPress={AddTodo}></input>
-        <ToDoList todos={todos}/>
-      </div>
+      <AppContext.Provider value={todos}>
+        <div className="container">
+          <h1>TODO LIST</h1>
+          <label>Add new todo </label>
+          <input type="text" value= {todoTitle} 
+            onChange={event =>setTitle(event.target.value)}
+            onKeyPress={AddTodo}></input>
+          {/* <ToDoList todos={todos}/> */}
+          <ToDoList />
+        </div>
+      </AppContext.Provider>
     );
   
 }

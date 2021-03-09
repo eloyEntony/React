@@ -10,11 +10,14 @@ const ToDoItem =({id, title, completed})=>{
    
 
     function useLocalStorage(key, intialValue) {
+
         const [storedValue, setStoredValue] = useState(()=>{
             try{
                 const item = window.localStorage.getItem(key)
+
                 console.log("useState",item);
-                return item ? JSON.parse(item):intialValue
+
+                return item ? JSON.parse(item) : intialValue
             }
             catch (error) {                
                 console.log(error);
@@ -24,13 +27,13 @@ const ToDoItem =({id, title, completed})=>{
 
         const setValue = value => {
             try {
-              const valueToStore = value instanceof Function ? value(storedValue) : value;
+              //const valueToStore = value instanceof Function ? value(storedValue) : value;
 
-              setStoredValue(valueToStore);
+              setStoredValue(value);
 
-              window.localStorage.setItem(key, JSON.stringify(valueToStore));
+              window.localStorage.setItem(key, JSON.stringify(value));
 
-              console.log("setVslue",valueToStore);
+              console.log("setVslue",value);
 
             } catch (error) {        
               console.log(error);
